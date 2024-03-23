@@ -70,17 +70,22 @@ def make_major_scale_hz_sequence(midi_pitch):
   return
 
 
-def generate_sequence_of_pitch(alist_of_hz, duration, sr):
+def generate_sequence_of_pitch(alist_of_hz, duration, sr, amplitude=1.0):
   '''
   입력: 
     alist_of_hz (list): A list of float (Hz)
     duration (float): Duration of each frequency (seconds)
+    sr (int): Sampling rate
+    amplitude (float): Amplitude of the sine wave (0<amp<=1)
 
   출력: 입력으로 주어진 리스트 속에 있는 모든 Hz가 순서대로 등장하는 오디오 샘플 (sample_rate=sr, torch.Tensor 형태)
 
   예) 입력:  
           alist_of_hz = [440, 660, 880]
           duration = 1
+          sr = 16000
+          amplitude = 1
+          
           출력: 440 Hz 사인파가 1초 동안 재생된 뒤 660 Hz 사인파가 1초 동안 재생된 뒤 880 Hz 사인파가 1초 동안 재생되는 오디오 샘플
   '''
   # TODO: 주어진 입출력 형식과 내용을 만족하는 함수를 완성하시오
@@ -297,7 +302,7 @@ if __name__ == "__main__":
 
   fund_note = 69 # MIDI pitch for A4
   major_scale_in_hz = make_major_scale_hz_sequence(fund_note)
-  scale_sine = generate_sequence_of_pitch(major_scale_in_hz, duration=0.5, sr=SR)
+  scale_sine = generate_sequence_of_pitch(major_scale_in_hz, duration=0.5, sr=SR, amplitude=1.0)
   torchaudio.save('scale_sine.wav', scale_sine.unsqueeze(0)/torch.max(scale_sine), SR)
 
 
