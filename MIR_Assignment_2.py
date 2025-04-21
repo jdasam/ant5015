@@ -325,9 +325,14 @@ def get_audio_prediction(audio_path:str, model:nn.Module, best_thresholds:torch.
 
 
 if __name__ == '__main__':
+  data_dir = Path('MTAT_SMALL/')
+
   your_model = YourModel(sr=16000, n_fft=1024, hop_length=512, n_mels=48, num_output=50, hidden_size=32)
-  your_model.load_state_dict(torch.load('your_model_best.pt'))
-  
+  ckpt = torch.load('your_model_best.pt')
+  weight = ckpt['weight'] if 'weight' in ckpt else ckpt
+  your_model.load_state_dict(weight)
+  your_model.vocab = ckpt['vocab'] if 'vocab' in ckpt else OnTheFlyDataset(data_dir).vocab
+  print(f"Model Loaded")
   
   in_channels = 10
   out_channels = 2
@@ -367,3 +372,18 @@ if __name__ == '__main__':
   linear_output = get_conv2d_output_with_linear(dummy_input, conv2d_linear, kernel_size)
   assert linear_output.shape == output.shape, "Output tensors have different shapes"
   assert torch.allclose(output, linear_output, atol=1e-6), "Output tensors are different"
+
+
+  pre_calculated_data = torch.load('assignment2_data.pt')
+  pre_cal_test_pred = pre_calculated_data['test_pred']
+  pre_cal_test_label = pre_calculated_data['test_label']
+  
+  best_thresholds = find_best_threshold_for_each_class(pre_cal_test_pred, pre_cal_test_label, num_grid=100)
+
+  your_audio_path = data_dir / '2/zephyrus-angelus-11-ave_maria__virgo_serena_josquin_des_prez-0-29.mp3'
+  your_model.to('cpu')
+  your_model.eval()
+  y, pred = get_audio_prediction(your_audio_path, your_model, best_thresholds)
+
+  print(f"pred: {pred}")
+  
