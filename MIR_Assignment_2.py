@@ -327,7 +327,7 @@ def get_audio_prediction(audio_path:str, model:nn.Module, best_thresholds:torch.
 if __name__ == '__main__':
   data_dir = Path('MTAT_SMALL/')
 
-  your_model = YourModel(sr=16000, n_fft=1024, hop_length=512, n_mels=48, num_output=50, hidden_size=32)
+  your_model = YourModel()
   ckpt = torch.load('your_model_best.pt')
   weight = ckpt['weight'] if 'weight' in ckpt else ckpt
   your_model.load_state_dict(weight)
