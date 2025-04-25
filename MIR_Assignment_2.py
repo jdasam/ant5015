@@ -328,7 +328,7 @@ if __name__ == '__main__':
   data_dir = Path('MTAT_SMALL/')
 
   your_model = YourModel()
-  ckpt = torch.load('your_model_best.pt')
+  ckpt = torch.load('your_model_best.pt', weights_only=False)
   weight = ckpt['weight'] if 'weight' in ckpt else ckpt
   your_model.load_state_dict(weight)
   your_model.vocab = ckpt['vocab'] if 'vocab' in ckpt else OnTheFlyDataset(data_dir).vocab
